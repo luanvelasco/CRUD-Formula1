@@ -1,5 +1,6 @@
 package br.com.velascoluan.formula1.serviceImp;
 
+import br.com.velascoluan.formula1.controller.DriverController;
 import br.com.velascoluan.formula1.model.Driver;
 import br.com.velascoluan.formula1.model.dto.DriverDto;
 import br.com.velascoluan.formula1.modelMapper.DozerMapper;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Service
 public class DriverServiceImpl implements DriverService {
 
@@ -20,8 +24,13 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public List<DriverDto> getDrivers() {
-        var drivers =  driverRepository.findAll();
-        return DozerMapper.parseListObject(drivers, DriverDto.class);
+        var drivers =  DozerMapper.parseListObject(driverRepository.findAll(), DriverDto.class);
+
+        drivers.stream().forEach(d -> d.add(linkTo(methodOn(DriverController.class)
+                .findDriverById(d.getKey()))
+                .withSelfRel()));
+
+        return drivers;
     }
 
     @Override
@@ -29,7 +38,11 @@ public class DriverServiceImpl implements DriverService {
         var driver = driverRepository.findById(driverId).orElseThrow(() ->
                 new IllegalStateException("Driver ID " + driverId + " not found"));
 
-        return DozerMapper.parseObject(driver, DriverDto.class);
+        var driverDto =  DozerMapper.parseObject(driver, DriverDto.class);
+
+        driverDto.add(linkTo(methodOn(DriverController.class).findDriverById(driverId)).withSelfRel());
+
+        return driverDto;
     }
 
     @Override
