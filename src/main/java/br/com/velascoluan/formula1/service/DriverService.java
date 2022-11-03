@@ -1,18 +1,18 @@
 package br.com.velascoluan.formula1.service;
 
-import br.com.velascoluan.formula1.model.Driver;
+import br.com.velascoluan.formula1.model.dto.DriverDto;
 
 import java.util.List;
 
 public interface DriverService{
 
-    List<Driver> getDrivers();
+    List<DriverDto> getDrivers();
 
-    Driver getDriverById(Long driverId);
+    DriverDto getDriverById(Long driverId);
 
-    void updateDriver(Long driverId, Driver driver);
+    void updateDriver(Long driverId, DriverDto driver);
 
     void deleteDriver(Long driverId);
 
-    void registerNewDriver(Driver driver);
+    void registerNewDriver(DriverDto driver);
 }

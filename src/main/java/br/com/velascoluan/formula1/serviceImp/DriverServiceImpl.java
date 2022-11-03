@@ -1,6 +1,8 @@
 package br.com.velascoluan.formula1.serviceImp;
 
 import br.com.velascoluan.formula1.model.Driver;
+import br.com.velascoluan.formula1.model.dto.DriverDto;
+import br.com.velascoluan.formula1.modelMapper.DozerMapper;
 import br.com.velascoluan.formula1.repository.DriverRepository;
 import br.com.velascoluan.formula1.service.DriverService;
 import org.springframework.beans.BeanUtils;
@@ -17,39 +19,40 @@ public class DriverServiceImpl implements DriverService {
     private DriverRepository driverRepository;
 
     @Override
-    public List<Driver> getDrivers() {
-        return driverRepository.findAll();
+    public List<DriverDto> getDrivers() {
+        var drivers =  driverRepository.findAll();
+        return DozerMapper.parseListObject(drivers, DriverDto.class);
     }
 
     @Override
-    public Driver getDriverById(Long driverId) {
-        Driver driver = driverRepository.findById(driverId).orElseThrow(() ->
+    public DriverDto getDriverById(Long driverId) {
+        var driver = driverRepository.findById(driverId).orElseThrow(() ->
                 new IllegalStateException("Driver ID " + driverId + " not found"));
 
-        return driver;
+        return DozerMapper.parseObject(driver, DriverDto.class);
     }
 
     @Override
     @Transactional
-    public void updateDriver(Long driverId, Driver driver) {
+    public void updateDriver(Long driverId, DriverDto driver) {
         var actualDriver = getDriverById(driverId);
 
         BeanUtils.copyProperties(driver, actualDriver, "id", "country", "name");
 
-        driverRepository.save(actualDriver);
+        driverRepository.save(DozerMapper.parseObject(actualDriver, Driver.class));
     }
 
     @Override
     public void deleteDriver(Long driverId) {
         var driver = getDriverById(driverId);
 
-        driverRepository.delete(driver);
+        driverRepository.delete(DozerMapper.parseObject(driver, Driver.class));
     }
 
     @Override
-    public void registerNewDriver(Driver driver) {
+    public void registerNewDriver(DriverDto driver) {
         if (driver != null){
-            driverRepository.save(driver);
+            driverRepository.save(DozerMapper.parseObject(driver, Driver.class));
         }
     }
 }

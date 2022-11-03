@@ -1,6 +1,6 @@
 package br.com.velascoluan.formula1.controller;
 
-import br.com.velascoluan.formula1.model.Driver;
+import br.com.velascoluan.formula1.model.dto.DriverDto;
 import br.com.velascoluan.formula1.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,28 +17,28 @@ public class DriverController {
     private DriverService driverService;
 
     @GetMapping(path = "/drivers")
-    public ResponseEntity<List<Driver>> findAllDrivers(){
-        List<Driver> response = driverService.getDrivers();
+    public ResponseEntity<List<DriverDto>> findAllDrivers(){
+        var response = driverService.getDrivers();
         return ResponseEntity.ok(response);
     }
 
     @GetMapping(path = "/{driverId}")
-    public ResponseEntity<Driver> findDriverById(@PathVariable("driverId") Long driverId){
-        Driver response = driverService.getDriverById(driverId);
+    public ResponseEntity<DriverDto> findDriverById(@PathVariable("driverId") Long driverId){
+        var response = driverService.getDriverById(driverId);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping(path = "/{driverId}")
     public ResponseEntity<?> updateDriver(
             @PathVariable("driverId") Long driverId,
-            @RequestBody Driver driver) {
+            @RequestBody DriverDto driver) {
 
        driverService.updateDriver(driverId, driver);
        return ResponseEntity.ok().build();
     }
 
     @PostMapping
-    public ResponseEntity<?> registerNewDriver(@RequestBody Driver driver){
+    public ResponseEntity<?> registerNewDriver(@RequestBody DriverDto driver){
         driverService.registerNewDriver(driver);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
