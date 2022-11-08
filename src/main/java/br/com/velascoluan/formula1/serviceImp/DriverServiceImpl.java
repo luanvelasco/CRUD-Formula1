@@ -1,6 +1,7 @@
 package br.com.velascoluan.formula1.serviceImp;
 
 import br.com.velascoluan.formula1.controller.DriverController;
+import br.com.velascoluan.formula1.exception.ResourceNotFoundException;
 import br.com.velascoluan.formula1.model.Driver;
 import br.com.velascoluan.formula1.model.dto.DriverDto;
 import br.com.velascoluan.formula1.modelMapper.DozerMapper;
@@ -36,7 +37,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverDto getDriverById(Long driverId) {
         var driver = driverRepository.findById(driverId).orElseThrow(() ->
-                new IllegalStateException("Driver ID " + driverId + " not found"));
+                new ResourceNotFoundException("Driver ID " + driverId + " not found"));
 
         var driverDto =  DozerMapper.parseObject(driver, DriverDto.class);
 
